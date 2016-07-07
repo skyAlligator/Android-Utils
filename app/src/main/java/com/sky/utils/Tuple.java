@@ -1,4 +1,4 @@
-package com.digi.portal.mobdev.android.aphone.helper;
+package com.sky.utils;
 
 /**
  * Created by Dinesh BS on 2/25/2016.
@@ -7,19 +7,18 @@ package com.digi.portal.mobdev.android.aphone.helper;
 
 /**
  * A small helper class used to pass two data type objects on method return.
- * 
- * @author dineshbs.b
  *
  * @param <X>
  * @param <Y>
+ * @author dineshbs.b
  */
 public class Tuple<X, Y> {
 
-	public final X x;
-	public final Y y;
+    public final X x;
+    public final Y y;
 
-	public Tuple(X x, Y y) {
-		this.x = x;
-		this.y = y;
-	}
+    public Tuple(X x, Y y) {
+        this.x = x;
+        this.y = y;
+    }
 }

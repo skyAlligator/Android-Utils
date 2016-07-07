@@ -1,11 +1,6 @@
-package com.digi.portal.mobdev.android.aphone.helper;
+package com.sky.utils;
 
 import android.os.Handler;
-import android.support.annotation.NonNull;
-
-import com.digi.portal.mobdev.android.aphone.task.Task;
-import com.digi.portal.mobdev.android.aphone.task.TaskManager;
-import com.digi.portal.mobdev.android.aphone.threadadapter.BgAdapter;
 
 import java.util.ArrayList;
 
@@ -19,12 +14,12 @@ import java.util.ArrayList;
  */
 public final class BgRunner extends Thread {
 
+    private static ArrayList<BgRunner> runners = new ArrayList<>();
     private BgAdapter listener;
-
     private Handler handler;
     private boolean cancel;
     private Object tag;
-    private static ArrayList<BgRunner> runners = new ArrayList<>();
+
     /**
      * Accept listener to run background and post results
      *
@@ -42,10 +37,6 @@ public final class BgRunner extends Thread {
         setName(tag.toString());
     }
 
-    public void setListener(BgAdapter listener) {
-        this.listener = listener;
-    }
-
     /**
      * start the thread
      *
@@ -54,7 +45,7 @@ public final class BgRunner extends Thread {
      * @return returns running thread
      * @author Dinesh BS
      */
-    public static BgRunner start(@NonNull final Object tag, BgAdapter listener) {
+    public static BgRunner start(final Object tag, BgAdapter listener) {
 
         if (tag == null)
             throw new NullPointerException("Tag should not be NULL");
@@ -76,7 +67,7 @@ public final class BgRunner extends Thread {
      * @return
      * @author Dinesh BS
      */
-    public static BgRunner getBgRunner(@NonNull final Object tag) {
+    public static BgRunner getBgRunner(final Object tag) {
         return AppCollections.searchItem(runners, new AppCollections.Compare<BgRunner>() {
 
             @Override
@@ -86,30 +77,25 @@ public final class BgRunner extends Thread {
         });
     }
 
+    public void setListener(BgAdapter listener) {
+        this.listener = listener;
+    }
+
     @Override
     public void run() {
-
-        final Task task = new Task(getName());
-        task.start();
-        TaskManager.getManager().addTask(task);
-
         final boolean success = listener.onBg();
 
         if (cancel) {
             listener.onCancel();
             runners.remove(this);
-            task.stop();
         } else
             handler.post(new Runnable() {
                 @Override
                 public void run() {
                     listener.onFinish(success);
                     runners.remove(BgRunner.this);
-                    task.stop();
                 }
             });
-
-
     }
 
     /**
